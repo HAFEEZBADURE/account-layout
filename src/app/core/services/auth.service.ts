@@ -2,9 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Ilogin } from '../../pages/account/models/login.interface';
 import { map } from 'rxjs';
+import { Iuser } from '../models/user.interface';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  constructor(private _httpClient: HttpClient) {}
+  private _user: Iuser;
+  public get user() {
+    return this._user;
+  }
+  constructor(private _httpClient: HttpClient) {
+    this._user = { firstName: '', profilePic: '', role: '', userCode: '' };
+  }
 
   login(input: Ilogin) {
     return this._httpClient.post<any>(
@@ -16,7 +23,7 @@ export class AuthService {
   loadUser() {
     const headers = {
       headers: {
-        Authorization: 'Bearer' + localStorage.getItem('myToken'),
+        Authorization: 'Bearer ' + localStorage.getItem('myToken'),
       },
     };
     return this._httpClient
@@ -26,7 +33,13 @@ export class AuthService {
       )
       .pipe(
         map((apiResponse: any) => {
-          return apiResponse.data;
+          this._user = {
+            ...apiResponse.data,
+            profilePicPath: apiResponse.data.profilePic,
+            role: apiResponse.data.roleName,
+          };
+
+          return this._user;
         })
       );
   }

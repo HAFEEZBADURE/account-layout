@@ -9,7 +9,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
 })
 export class DashboardComponent implements OnInit {
   user$: Observable<any>;
-
+  name: string = 'Hafeez';
   constructor(private _authContext: AuthService) {
     this.user$ = this._authContext.loadUser();
   }
